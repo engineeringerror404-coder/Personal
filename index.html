@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            background: #000;
+            cursor: none;
+        }
+
+        /* Magic Cursor with Trails */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            animation: trailFade 1s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            to {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+        }
+
+        @keyframes magicExplode {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Magical Sparkles */
+        .sparkle {
+            position: fixed;
+            font-size: 12px;
+            color: #ffd700;
+            pointer-events: none;
+            z-index: 9998;
+            animation: sparkleFloat 2s ease-out forwards;
+        }
+
+        @keyframes sparkleFloat {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Dynamic Background with Multiple Layers */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .aurora-overlay {
+            background: linear-gradient(45deg, 
+                rgba(255, 0, 150, 0.1) 0%, 
+                rgba(0, 204, 255, 0.1) 25%, 
+                rgba(255, 0, 150, 0.1) 50%, 
+                rgba(0, 255, 204, 0.1) 75%, 
+                rgba(255, 0, 150, 0.1) 100%);
+            background-size: 300% 300%;
+            animation: auroraFlow 20s ease infinite;
+        }
+
+        @keyframes auroraFlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        /* Neural Network Canvas */
+        #neural-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        /* Three.js Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-element:nth-child(odd) {
+            animation-delay: -2s;
+        }
+
+        .floating-element:nth-child(even) {
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+            }
+        }
+
+        .heart-float {
+            font-size: 24px;
+            color: rgba(255, 182, 193, 0.6);
+            animation: heartFloat 12s linear infinite;
+        }
+
+        @keyframes heartFloat {
+            0% {
+                transform: translateY(100vh) translateX(0px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Birthday Wish Section */
+        .birthday-wish {
+            margin-bottom: 80px;
+            position: relative;
+            animation: grandEntrance 3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            opacity: 0;
+        }
+
+        @keyframes grandEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotateY(180deg) translateY(100px);
+                filter: blur(10px);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1) rotateY(20deg) translateY(-20px);
+                filter: blur(2px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg) translateY(0px);
+                filter: blur(0px);
+            }
+        }
+
+        .birthday-wish h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 400;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .birthday-wish h1 .letter {
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: center bottom;
+            cursor: none;
+        }
+
+        .birthday-wish h1 .letter:hover {
+            color: #ffd700;
+            transform: translateY(-15px) rotate(10deg) scale(1.2);
+            text-shadow: 0 20px 60px rgba(255, 215, 0, 0.8);
+        }
+
+        .birthday-wish h1::before,
+        .birthday-wish h1::after {
+            content: '✨';
+            position: absolute;
+            top: 50%;
+            font-size: 3rem;
+            color: #ffd700;
+            animation: sparkleRotate 4s ease-in-out infinite;
+        }
+
+        .birthday-wish h1::before {
+            left: -80px;
+        }
+
+        .birthday-wish h1::after {
+            right: -80px;
+            animation-delay: 2s;
+        }
+
+        @keyframes sparkleRotate {
+            0%, 100% {
+                transform: translateY(-50%) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translateY(-50%) rotate(180deg) scale(1.3);
+            }
+        }
+
+        .birthday-wish p {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            animation: subtitleReveal 2s ease-out 1s both;
+        }
+
+        @keyframes subtitleReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0px);
+                filter: blur(0px);
+            }
+        }
+
+        /* Interactive CTA Button */
+        .cta-button {
+            position: relative;
+            display: inline-block;
+            padding: 25px 60px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24, #feca57, #48dbfb);
+            background-size: 300% 300%;
+            color: white;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            border-radius: 60px;
+            overflow: hidden;
+            cursor: none;
+            box-shadow: 0 20px 60px rgba(255, 107, 107, 0.4);
+            animation: buttonEntrance 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 2s both,
+                       gradientShift 3s ease infinite;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        @keyframes buttonEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotateX(90deg) translateZ(-100px);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1) rotateX(20deg) translateZ(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0deg) translateZ(0px);
+            }
+        }
+
+        .cta-button:hover {
+            transform: translateY(-10px) scale(1.05) perspective(1000px) rotateX(10deg);
+            box-shadow: 0 30px 80px rgba(255, 107, 107, 0.6);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cta-button span {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Particle System */
+        .particle-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: particleFloat 8s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Loading Screen */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 2s ease, visibility 2s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .heart-spinner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: heartSpin 2s linear infinite;
+        }
+
+        .heart-spinner::before {
+            content: '💖';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            animation: heartPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes heartSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes heartPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        .loading-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: white;
+            text-align: center;
+            animation: loadingTextPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes loadingTextPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Interactive Elements */
+        .interactive-orb {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
+            cursor: none;
+            animation: orbPulse 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-orb:hover {
+            transform: scale(1.5);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0.2));
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+
+        @keyframes orbPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .birthday-wish h1 {
+                font-size: 2.5rem;
+            }
+
+            .birthday-wish h1::before,
+            .birthday-wish h1::after {
+                display: none;
+            }
+
+            .birthday-wish p {
+                font-size: 1.2rem;
+            }
+
+            .cta-button {
+                padding: 20px 40px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Audio visualization */
+        .audio-wave {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3px;
+            z-index: 5;
+        }
+
+        .wave-bar {
+            width: 4px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 2px;
+            animation: waveAnimation 1s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes waveAnimation {
+            0%, 100% { height: 20px; }
+            50% { height: 40px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="heart-spinner"></div>
+        </div>
+        <div class="loading-text">
+            Creating magic just for you...<br>
+            <small style="font-family: Poppins; font-size: 1rem; opacity: 0.8;">Please wait while we prepare your surprise</small>
+        </div>
+    </div>
+
+    <!-- Background Layers -->
+    <div class="background-layer gradient-bg"></div>
+    <div class="background-layer aurora-overlay"></div>
+
+    <!-- Neural Network Canvas -->
+    <canvas id="neural-canvas"></canvas>
+
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Particle Container -->
+    <div class="particle-container" id="particleContainer"></div>
+
+    <!-- Interactive Orbs -->
+    <div class="interactive-orb" style="top: 20%; left: 15%;"></div>
+    <div class="interactive-orb" style="top: 30%; right: 20%;"></div>
+    <div class="interactive-orb" style="bottom: 25%; left: 10%;"></div>
+    <div class="interactive-orb" style="bottom: 35%; right: 15%;"></div>
+
+    <!-- Floating Hearts -->
+    <div class="heart-float" style="left: 5%;">💖</div>
+    <div class="heart-float" style="left: 15%; animation-delay: -2s;">💕</div>
+    <div class="heart-float" style="left: 25%; animation-delay: -4s;">💝</div>
+    <div class="heart-float" style="left: 75%; animation-delay: -6s;">✨</div>
+    <div class="heart-float" style="left: 85%; animation-delay: -8s;">🌟</div>
+    <div class="heart-float" style="left: 95%; animation-delay: -10s;">💫</div>
+
+    <!-- Audio Wave Visualizer -->
+    <div class="audio-wave">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container welcome-container">
+        <div class="birthday-wish">
+            <h1 id="mainTitle">Happy 21st Birthday, My Dearest!</h1>
+            <p>A little surprise is waiting just for you...</p>
+        </div>
+
+        <a href="pages/01-cake.html" class="cta-button" id="ctaButton">
+            <span>Let the Celebration Begin!</span>
+        </a>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer, particles = [];
+        let mouse = { x: 0, y: 0 };
+        let neuralNodes = [];
+        let sparkleTimer = 0;
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initCursor();
+            initNeuralNetwork();
+            initThreeJS();
+            initParticleSystem();
+            initInteractiveElements();
+            initTextAnimations();
+            
+            // Hide loading screen after 3 seconds
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 3000);
+        });
+
+        // Magic Cursor System
+        function initCursor() {
+            const cursor = document.querySelector('.cursor');
+            
+            document.addEventListener('mousemove', (e) => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+
+                // Create cursor trails
+                if (Math.random() > 0.8) {
+                    createCursorTrail(e.clientX, e.clientY);
+                }
+
+                // Create sparkles on movement
+                sparkleTimer++;
+                if (sparkleTimer > 8) {
+                    createSparkle(e.clientX, e.clientY);
+                    sparkleTimer = 0;
+                }
+            });
+
+            // Enhanced click effects
+            document.addEventListener('click', (e) => {
+                createMagicExplosion(e.clientX, e.clientY);
+            });
+        }
+
+        function createCursorTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            document.body.appendChild(trail);
+            
+            setTimeout(() => trail.remove(), 1000);
+        }
+
+        function createSparkle(x, y) {
+            const sparkles = ['✨', '⭐', '🌟', '💫', '⚡'];
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+            sparkle.style.left = (x + Math.random() * 40 - 20) + 'px';
+            sparkle.style.top = (y + Math.random() * 40 - 20) + 'px';
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 2000);
+        }
+
+        function createMagicExplosion(x, y) {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd700', '#ff9ff3'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    width: 8px;
+                    height: 8px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: 50%;
+                    left: ${x}px;
+                    top: ${y}px;
+                    pointer-events: none;
+                    z-index: 10000;
+                    animation: magicExplode 2s ease-out forwards;
+                `;
+                
+                const angle = (Math.PI * 2 * i) / 20;
+                const distance = Math.random() * 150 + 50;
+                particle.style.setProperty('--dx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--dy', Math.sin(angle) * distance + 'px');
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        // Neural Network Background
+        function initNeuralNetwork() {
+            const canvas = document.getElementById('neural-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Create nodes
+            for (let i = 0; i < 100; i++) {
+                neuralNodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 3 + 1
+                });
+            }
+
+            function animateNeural() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Update and draw nodes
+                neuralNodes.forEach(node => {
+                    node.x += node.vx;
+                    node.y += node.vy;
+                    
+                    if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                    if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+                    
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.fill();
+                });
+
+                // Draw connections
+                neuralNodes.forEach((nodeA, i) => {
+                    neuralNodes.slice(i + 1).forEach(nodeB => {
+                        const distance = Math.sqrt(
+                            Math.pow(nodeA.x - nodeB.x, 2) + 
+                            Math.pow(nodeA.y - nodeB.y, 2)
+                        );
+                        
+                        if (distance < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(nodeA.x, nodeB.y);
+                            ctx.lineTo(nodeB.x, nodeB.y);
+                            ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 * (1 - distance / 120)})`;
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+                    });
+                });
+
+                requestAnimationFrame(animateNeural);
+            }
+            
+            animateNeural();
+        }
+
+        // Three.js 3D Scene
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({
+                canvas: document.getElementById('three-canvas'),
+                alpha: true,
+                antialias: true
+            });
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Create 3D particles
+            const geometries = [
+                new THREE.SphereGeometry(0.1, 8, 8),
+                new THREE.OctahedronGeometry(0.1),
+                new THREE.TetrahedronGeometry(0.1),
+                new THREE.BoxGeometry(0.1, 0.1, 0.1)
+            ];
+
+            for (let i = 0; i < 300; i++) {
+                const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+                const material = new THREE.MeshBasicMaterial({
+                    color: new THREE.Color().setHSL(Math.random(), 0.8, 0.6),
+                    transparent: true,
+                    opacity: Math.random() * 0.8 + 0.2
+                });
+                
+                const particle = new THREE.Mesh(geometry, material);
+                particle.position.set(
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60
+                );
+                particle.velocity = {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                };
+                scene.add(particle);
+                particles.push(particle);
+            }
+
+            camera.position.z = 20;
+            
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Update particle positions and animations
+                particles.forEach((particle) => {
+                    particle.position.x += particle.velocity.x;
+                    particle.position.y += particle.velocity.y;
+                    particle.position.z += particle.velocity.z;
+
+                    // Bounce off boundaries
+                    if (particle.position.x > 30 || particle.position.x < -30) particle.velocity.x *= -1;
+                    if (particle.position.y > 30 || particle.position.y < -30) particle.velocity.y *= -1;
+                    if (particle.position.z > 30 || particle.position.z < -30) particle.velocity.z *= -1;
+
+                    // Rotation animations
+                    particle.rotation.x += 0.01;
+                    particle.rotation.y += 0.01;
+                    particle.rotation.z += 0.005;
+
+                    // Pulsing effect based on time
+                    const time = Date.now() * 0.001;
+                    particle.scale.setScalar(1 + Math.sin(time + particle.position.x) * 0.3);
+                });
+
+                // Camera movement based on mouse
+                camera.position.x += (mouse.x * 0.01 - camera.position.x) * 0.05;
+                camera.position.y += (-mouse.y * 0.01 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Particle System for floating elements
+        function initParticleSystem() {
+            const container = document.getElementById('particleContainer');
+            
+            function createFloatingParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * window.innerWidth + 'px';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                
+                // Random colors
+                const colors = ['rgba(255, 255, 255, 0.8)', 'rgba(255, 215, 0, 0.6)', 'rgba(255, 182, 193, 0.7)'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                container.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 8000);
+            }
+
+            // Create particles continuously
+            setInterval(createFloatingParticle, 500);
+        }
+
+        // Interactive Elements
+        function initInteractiveElements() {
+            const orbs = document.querySelectorAll('.interactive-orb');
+            
+            orbs.forEach(orb => {
+                orb.addEventListener('mouseenter', () => {
+                    createSparkle(orb.offsetLeft + 20, orb.offsetTop + 20);
+                });
+                
+                orb.addEventListener('click', () => {
+                    createMagicExplosion(orb.offsetLeft + 20, orb.offsetTop + 20);
+                });
+            });
+
+            // CTA Button enhancements
+            const ctaButton = document.getElementById('ctaButton');
+            ctaButton.addEventListener('mouseenter', () => {
+                createRainbowTrail(ctaButton);
+            });
+        }
+
+        function createRainbowTrail(element) {
+            const rect = element.getBoundingClientRect();
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ffd700', '#ff9ff3', '#a8e6cf'];
+            
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const spark = document.createElement('div');
+                    spark.style.cssText = `
+                        position: fixed;
+                        width: 6px;
+                        height: 6px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: 50%;
+                        left: ${rect.left + Math.random() * rect.width}px;
+                        top: ${rect.top + Math.random() * rect.height}px;
+                        pointer-events: none;
+                        z-index: 10000;
+                        animation: sparkFade 1.5s ease-out forwards;
+                    `;
+                    document.body.appendChild(spark);
+                    setTimeout(() => spark.remove(), 1500);
+                }, i * 50);
+            }
+        }
+
+        // Text Animations
+        function initTextAnimations() {
+            const title = document.getElementById('mainTitle');
+            const text = title.textContent;
+            title.innerHTML = '';
+            
+            // Split text into individual letters
+            [...text].forEach((letter, index) => {
+                const span = document.createElement('span');
+                span.className = 'letter';
+                span.textContent = letter === ' ' ? '\u00A0' : letter;
+                span.style.animationDelay = index * 0.1 + 's';
+                title.appendChild(span);
+            });
+        }
+
+        // Additional CSS for spark fade animation
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes sparkFade {
+                0% {
+                    transform: scale(1) translateY(0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(0) translateY(-50px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+
+        // Easter egg - double click for extra magic
+        let clickCount = 0;
+        document.addEventListener('click', () => {
+            clickCount++;
+            setTimeout(() => { clickCount = 0; }, 500);
+            
+            if (clickCount === 2) {
+                triggerMagicShow();
+            }
+        });
+
+        function triggerMagicShow() {
+            // Create a burst of magical effects
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createSparkle(x, y);
+                    
+                    if (i % 5 === 0) {
+                        createMagicExplosion(x, y);
+                    }
+                }, i * 100);
+            }
+            
+            // Temporarily change the background gradient
+            const gradientBg = document.querySelector('.gradient-bg');
+            gradientBg.style.animation = 'none';
+            gradientBg.style.background = 'linear-gradient(-45deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e)';
+            
+            setTimeout(() => {
+                gradientBg.style.animation = 'gradientShift 15s ease infinite';
+                gradientBg.style.background = 'linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)';
+            }, 3000);
+        }
+
+        // Touch device support
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            createSparkle(touch.clientX, touch.clientY);
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            createCursorTrail(touch.clientX, touch.clientY);
+        });
+
+        // Performance optimization - limit particle count
+        setInterval(() => {
+            const sparkles = document.querySelectorAll('.sparkle');
+            const trails = document.querySelectorAll('.cursor-trail');
+            
+            if (sparkles.length > 20) {
+                for (let i = 0; i < 10; i++) {
+                    if (sparkles[i]) sparkles[i].remove();
+                }
+            }
+            
+            if (trails.length > 15) {
+                for (let i = 0; i < 8; i++) {
+                    if (trails[i]) trails[i].remove();
+                }
+            }
+        }, 2000);
+
+        // Console message for the birthday person
+        console.log(`
+        🎉✨ Happy 21st Birthday! ✨🎉
+        
+        You've found a little Easter egg! 
+        Try double-clicking anywhere on the page for extra magic! 💫
+        
+        Made with ❤️ just for you!
+        `);
+    </script>
+</body>
+</html>
