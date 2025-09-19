@@ -1,0 +1,824 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 21st Birthday!</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        The main heading. Remember to replace "Her Name" -->
+        <!-- <h1 class="birthday-wish">Happy 21st Birthday, [Her Name]!</h1>
+        <p class="instruction">Make a wish and click the flame to blow out the candle!</p>
+
+        SVG Cake and Candle -->
+        <!-- <div class="cake-container">
+            <div class="cake">
+                <div class="icing"></div>
+                <div class="layer layer-bottom"></div>
+                <div class="layer layer-middle"></div>
+                <div class="layer layer-top"></div>
+            </div>
+            <div class="candle">
+                <div class="flame" id="flame"></div>
+            </div>
+        </div>
+
+        This button is hidden initially and appears after the candle is blown out
+         <a href="02-gift.html" id="next-button" class="next-btn hidden">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Next
+        </a>
+    </div>
+
+     Music player -->
+    <!-- <div class="music-player">
+        <p>Play Birthday Song</p>
+        <audio id="birthday-song" src="../assets/audio/birthday-song.mp3" loop></audio>
+        <button id="play-pause-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </button>
+    </div>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
+
+
+ --> 
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 21st Birthday!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Three.js Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.5; }
+        }
+
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 2s ease-out;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            animation: fadeInUp 2s ease-out 3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Birthday wish */
+        .birthday-wish {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: glow 3s ease-in-out infinite alternate;
+            line-height: 1.2;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.2); }
+            to { text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 255, 255, 0.4); }
+        }
+
+        /* Instruction */
+        .instruction {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Cake container */
+        .cake-container {
+            position: relative;
+            z-index: 20;
+            animation: bounceIn 1.5s ease-out 4s both;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-top: 10vh;
+        }
+
+        .cake-container:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(-10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* Cake styles */
+        .cake {
+            position: relative;
+            width: 200px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .layer {
+            position: absolute;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .layer-bottom {
+            width: 200px;
+            height: 40px;
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            bottom: 0;
+            left: 0;
+        }
+
+        .layer-middle {
+            width: 160px;
+            height: 35px;
+            background: linear-gradient(45deg, #DEB887, #F4A460);
+            bottom: 35px;
+            left: 20px;
+        }
+
+        .layer-top {
+            width: 120px;
+            height: 30px;
+            background: linear-gradient(45deg, #FFB6C1, #FFC0CB);
+            bottom: 65px;
+            left: 40px;
+        }
+
+        .icing {
+            position: absolute;
+            width: 220px;
+            height: 15px;
+            background: linear-gradient(45deg, #FFFFFF, #F0F8FF);
+            border-radius: 50px;
+            top: -5px;
+            left: -10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Candle */
+        .candle {
+            position: absolute;
+            width: 8px;
+            height: 60px;
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            border-radius: 4px;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Flame */
+        .flame {
+            position: absolute;
+            width: 16px;
+            height: 20px;
+            background: radial-gradient(circle at 30% 40%, #FF6B35, #F7931E, #FFD700);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: flicker 1.5s infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1) rotate(-2deg); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+        }
+
+        .flame.blown-out {
+            animation: blowOut 1s ease-out forwards;
+        }
+
+        @keyframes blowOut {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.5) translateY(-10px); opacity: 0.5; }
+            100% { transform: translateX(-50%) scale(0); opacity: 0; }
+        }
+
+        /* Next button */
+        .next-btn {
+            position: relative;
+            display: inline-block;
+            padding: 15px 40px;
+            color: white;
+            text-decoration: none;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-top: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .next-btn span {
+            position: absolute;
+            display: block;
+        }
+
+        .next-btn span:nth-child(1) {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff);
+            animation: btn-anim1 1s linear infinite;
+        }
+
+        .next-btn span:nth-child(2) {
+            top: -100%;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #fff);
+            animation: btn-anim2 1s linear infinite;
+            animation-delay: 0.25s;
+        }
+
+        .next-btn span:nth-child(3) {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(270deg, transparent, #fff);
+            animation: btn-anim3 1s linear infinite;
+            animation-delay: 0.5s;
+        }
+
+        .next-btn span:nth-child(4) {
+            bottom: -100%;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(360deg, transparent, #fff);
+            animation: btn-anim4 1s linear infinite;
+            animation-delay: 0.75s;
+        }
+
+        @keyframes btn-anim1 {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        @keyframes btn-anim2 {
+            0% { top: -100%; }
+            50%, 100% { top: 100%; }
+        }
+
+        @keyframes btn-anim3 {
+            0% { right: -100%; }
+            50%, 100% { right: 100%; }
+        }
+
+        @keyframes btn-anim4 {
+            0% { bottom: -100%; }
+            50%, 100% { bottom: 100%; }
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+        .visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+            transition: all 1s ease-out;
+        }
+
+        /* Music player */
+        .music-player {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 1s ease-out 5s both;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .music-player p {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        #play-pause-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        #play-pause-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Celebration effects */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #FFD700;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(2n) { background: #FF6B6B; animation-delay: -0.5s; }
+        .confetti:nth-child(3n) { background: #4ECDC4; animation-delay: -1s; }
+        .confetti:nth-child(4n) { background: #45B7D1; animation-delay: -1.5s; }
+        .confetti:nth-child(5n) { background: #96CEB4; animation-delay: -2s; }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .birthday-wish {
+                font-size: 2.5rem;
+            }
+            
+            .instruction {
+                font-size: 1rem;
+                padding: 0 20px;
+            }
+            
+            .cake {
+                width: 150px;
+                height: 90px;
+            }
+            
+            .layer-bottom { width: 150px; height: 30px; }
+            .layer-middle { width: 120px; height: 25px; left: 15px; bottom: 25px; }
+            .layer-top { width: 90px; height: 20px; left: 30px; bottom: 45px; }
+            .icing { width: 165px; left: -7px; }
+            
+            .music-player {
+                top: 20px;
+                right: 20px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-text">Preparing something special...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Floating Particles -->
+    <div class="particles-container"></div>
+
+    <div class="container">
+        <!-- The main heading -->
+        <h1 class="birthday-wish">Happy 21st Birthday, Divyanshi!</h1>
+        <p class="instruction">Make a wish and click the flame to blow out the candle!</p>
+
+        <!-- SVG Cake and Candle -->
+        <div class="cake-container" id="cake-container">
+            <div class="cake">
+                <div class="icing"></div>
+                <div class="layer layer-bottom"></div>
+                <div class="layer layer-middle"></div>
+                <div class="layer layer-top"></div>
+            </div>
+            <div class="candle">
+                <div class="flame" id="flame"></div>
+            </div>
+        </div>
+
+        <!-- Next button -->
+        <a href="02-gift.html" id="next-button" class="next-btn hidden">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Next
+        </a>
+    </div>
+
+    <!-- Music player -->
+    <div class="music-player">
+        <p>Birthday Song</p>
+        <audio id="birthday-song" loop>
+            <source src="../assets/audio/birthday-song.mp3" type="audio/mpeg">
+            <source src="" type="audio/wav">
+        </audio>
+        <button id="play-pause-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Celebration Container -->
+    <div class="celebration" id="celebration"></div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer, particles = [];
+        let isPlaying = false;
+        let candleBlown = false;
+
+        // Initialize Three.js scene
+        function initThreeJS() {
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('three-canvas'),
+                alpha: true,
+                antialias: true
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+
+            // Create floating 3D particles
+            const particleGeometry = new THREE.SphereGeometry(0.02, 8, 8);
+            const particleMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            // Create multiple particles
+            for (let i = 0; i < 50; i++) {
+                const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+                particle.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20
+                );
+                particle.velocity = {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                };
+                scene.add(particle);
+                particles.push(particle);
+            }
+
+            camera.position.z = 5;
+
+            // Start animation loop
+            animate();
+        }
+
+        // Three.js animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate particles
+            particles.forEach(particle => {
+                particle.position.x += particle.velocity.x;
+                particle.position.y += particle.velocity.y;
+                particle.position.z += particle.velocity.z;
+
+                // Bounce particles off boundaries
+                if (particle.position.x > 10 || particle.position.x < -10) particle.velocity.x *= -1;
+                if (particle.position.y > 10 || particle.position.y < -10) particle.velocity.y *= -1;
+                if (particle.position.z > 10 || particle.position.z < -10) particle.velocity.z *= -1;
+
+                // Add rotation
+                particle.rotation.x += 0.01;
+                particle.rotation.y += 0.01;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // Create floating 2D particles
+        function createFloatingParticles() {
+            const container = document.querySelector('.particles-container');
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const celebration = document.getElementById('celebration');
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                celebration.appendChild(confetti);
+            }
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                celebration.innerHTML = '';
+            }, 6000);
+        }
+
+        // Audio setup and auto-play
+        function setupAudio() {
+            const audio = document.getElementById('birthday-song');
+            const playBtn = document.getElementById('play-pause-btn');
+            
+            // Auto-play attempt after loading screen
+            setTimeout(() => {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    updatePlayButton();
+                }).catch(e => {
+                    console.log('Auto-play prevented, user interaction required');
+                });
+            }, 3500);
+
+            // Play button functionality
+            playBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                } else {
+                    audio.play();
+                    isPlaying = true;
+                }
+                updatePlayButton();
+            });
+
+            function updatePlayButton() {
+                const icon = playBtn.querySelector('svg');
+                if (isPlaying) {
+                    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+                } else {
+                    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+                }
+            }
+        }
+
+        // Candle blow interaction
+        function setupCandleInteraction() {
+            const flame = document.getElementById('flame');
+            const nextButton = document.getElementById('next-button');
+            const cakeContainer = document.getElementById('cake-container');
+
+            function blowCandle() {
+                if (candleBlown) return;
+                
+                candleBlown = true;
+                flame.classList.add('blown-out');
+                
+                // Create confetti celebration
+                setTimeout(() => {
+                    createConfetti();
+                    nextButton.classList.remove('hidden');
+                    nextButton.classList.add('visible');
+                }, 1000);
+
+                // Add special message
+                setTimeout(() => {
+                    const message = document.createElement('div');
+                    message.style.cssText = `
+                        position: absolute;
+                        background : blue;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        color: white;
+                        font-family: 'Dancing Script', cursive;
+                        font-size: 1.8rem;
+                        text-align: center;
+                        opacity: 0;
+                        animation: fadeIn 2s ease-out forwards;
+                        z-index: 1001;
+                        text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                    `;
+                    message.innerHTML = 'Your wish has been made!<br>May all your dreams come true... ✨';
+                    document.body.appendChild(message);
+
+                    setTimeout(() => message.remove(), 4000);
+                }, 1500);
+            }
+
+            flame.addEventListener('click', blowCandle);
+            cakeContainer.addEventListener('click', blowCandle);
+        }
+
+        // Loading screen management
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loading-screen');
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 2000);
+            }, 3000);
+        }
+
+        // Window resize handler
+        function handleResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Three.js
+            initThreeJS();
+            
+            // Create floating particles
+            createFloatingParticles();
+            
+            // Setup audio
+            setupAudio();
+            
+            // Setup candle interaction
+            setupCandleInteraction();
+            
+            // Hide loading screen
+            hideLoadingScreen();
+            
+            // Window resize listener
+            window.addEventListener('resize', handleResize);
+        });
+
+        // Add CSS for fadeIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translate(-50%, -50%) translateY(20px); }
+                to { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

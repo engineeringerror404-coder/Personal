@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Reasons Why My Pineapple Is Special</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a56 0%, #ffad69 25%, #ffd93d 50%, #6BCF7F 75%, #4D9DE0 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            overflow-x: hidden;
+            cursor: none;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #ffd93d, #ff9a56);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            animation: trailFade 0.5s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        /* Three.js Background */
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeInDown 1.5s ease 0.5s forwards;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff9a56, #ffd93d, #6BCF7F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: rgba(255,255,255,0.9);
+            font-weight: 700;
+        }
+
+        /* Pineapple Container */
+        .pineapple-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Pineapple Shape */
+        .pineapple-body {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            background: linear-gradient(135deg, #ff9a56 0%, #ffd93d 100%);
+            border-radius: 50px 50px 150px 150px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: visible;
+            margin-bottom: 2rem;
+        }
+
+        /* Pineapple Crown/Leaves */
+        .pineapple-crown {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 120px;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 80px;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            border-radius: 50px 50px 10px 10px;
+            transform-origin: bottom center;
+            animation: leafSway 3s ease-in-out infinite;
+        }
+
+        .leaf:nth-child(1) { left: 20px; transform: rotate(-20deg); animation-delay: 0s; }
+        .leaf:nth-child(2) { left: 40px; transform: rotate(-10deg); animation-delay: 0.2s; }
+        .leaf:nth-child(3) { left: 60px; transform: rotate(0deg); animation-delay: 0.4s; }
+        .leaf:nth-child(4) { left: 80px; transform: rotate(10deg); animation-delay: 0.6s; }
+        .leaf:nth-child(5) { left: 100px; transform: rotate(20deg); animation-delay: 0.8s; }
+        .leaf:nth-child(6) { left: 120px; transform: rotate(30deg); animation-delay: 1s; }
+
+        @keyframes leafSway {
+            0%, 100% { transform: rotate(var(--rotation, 0deg)) scale(1); }
+            50% { transform: rotate(calc(var(--rotation, 0deg) + 5deg)) scale(1.05); }
+        }
+
+        /* Diamond Pattern on Pineapple */
+        .pineapple-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, 
+                    rgba(255,255,255,0.1) 0px, 
+                    rgba(255,255,255,0.1) 2px, 
+                    transparent 2px, 
+                    transparent 20px),
+                repeating-linear-gradient(-45deg, 
+                    rgba(255,255,255,0.1) 0px, 
+                    rgba(255,255,255,0.1) 2px, 
+                    transparent 2px, 
+                    transparent 20px);
+            border-radius: inherit;
+        }
+
+        /* Reason Diamonds */
+        .reasons-grid {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(7, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .reason-diamond {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            transform: rotate(45deg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: diamondAppear 0.5s ease forwards;
+        }
+
+        .reason-diamond:nth-child(odd) {
+            animation-delay: calc(var(--index) * 0.1s);
+        }
+
+        .reason-diamond:nth-child(even) {
+            animation-delay: calc(var(--index) * 0.15s);
+        }
+
+        .reason-diamond:hover {
+            transform: rotate(45deg) scale(1.2);
+            background: rgba(255,255,255,0.4);
+            box-shadow: 0 0 30px rgba(255,212,61,0.8);
+        }
+
+        .reason-diamond.active {
+            background: linear-gradient(135deg, #ffd93d, #ff9a56);
+            box-shadow: 0 0 20px rgba(255,212,61,0.6);
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes diamondAppear {
+            from {
+                opacity: 0;
+                transform: rotate(45deg) scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(45deg) scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(45deg) scale(1.1); }
+        }
+
+        .reason-number {
+            transform: rotate(-45deg);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Reason Display */
+        .reason-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .reason-display.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .reason-display h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #ff9a56;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+        }
+
+        .reason-display p {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.8;
+            font-weight: 400;
+        }
+
+        .close-reason {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #ff9a56;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-reason:hover {
+            transform: scale(1.2);
+            color: #ff6b35;
+        }
+
+        /* Final Message */
+        .final-message {
+            text-align: center;
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fadeIn 1s ease 3s forwards;
+        }
+
+        .final-message h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .next-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #ff9a56, #ffd93d);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .next-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .next-btn:hover:before {
+            left: 100%;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #ffd93d;
+            transform: scale(1.3);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(odd) {
+            animation-delay: -2s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pineapple-body {
+                width: 250px;
+                height: 350px;
+            }
+            
+            .reasons-grid {
+                padding: 15px;
+                gap: 8px;
+            }
+            
+            .reason-diamond {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .reason-display {
+                margin: 1rem;
+                padding: 2rem;
+                max-width: 90vw;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+
+    <!-- Three.js Background -->
+    <div id="three-container"></div>
+
+    <!-- Audio -->
+    <audio id="background-music" loop>
+        <source src="../assets/audio/full-video-guzarish-ghajini-aamir-khan-asin-ar-rahman-javed-ali-son_aYFd46Kn.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="page-title">5 Reasons Why</h1>
+            <p class="subtitle">My Sweet Pineapple Is So Special</p>
+        </div>
+
+        <!-- Pineapple Container -->
+        <div class="pineapple-container">
+            <div class="pineapple-body">
+                <!-- Crown/Leaves -->
+                <div class="pineapple-crown">
+                    <div class="leaf" style="--rotation: -20deg;"></div>
+                    <div class="leaf" style="--rotation: -10deg;"></div>
+                    <div class="leaf" style="--rotation: 0deg;"></div>
+                    <div class="leaf" style="--rotation: 10deg;"></div>
+                    <div class="leaf" style="--rotation: 20deg;"></div>
+                    <div class="leaf" style="--rotation: 30deg;"></div>
+                </div>
+                
+                <!-- Pattern -->
+                <div class="pineapple-pattern"></div>
+                
+                <!-- Reasons Grid -->
+                <div class="reasons-grid" id="reasons-grid">
+                    <!-- Diamonds will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Final Message -->
+            <div class="final-message" id="final-message">
+                <h3>You're my sweetest adventure, Pineapple!</h3>
+                <a href="07-playlist.html" class="next-btn">
+                    Listen to Our Song
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reason Display Modal -->
+    <div class="reason-display" id="reason-display">
+        <button class="close-reason" id="close-reason">&times;</button>
+        <h2 id="reason-title"></h2>
+        <p id="reason-text"></p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-container" id="progress-container">
+        <!-- Progress dots will be generated by JavaScript -->
+    </div>
+
+    <script>
+        // Reasons data
+        const reasons = [
+    { 
+        title: "Your Simple Elegance", 
+        text: "Your beauty shines in the quiet grace of your simplicity, a natural charm that captivates without effort."
+    },
+    { 
+        title: "Your Brilliant Mind", 
+        text: "Your intelligence sparkles like a rare gem, blending beauty with wisdom in a way that inspires everyone around you."
+    },
+    { 
+        title: "Your Mysterious Allure", 
+        text: "There's a secret in your feminine charm, a magnetic pull that draws hearts closer with every glance."
+    },
+    { 
+        title: "Your Authentic Heart", 
+        text: "Unlike others, your genuine spirit radiates truth and kindness, making you a beacon of real beauty."
+    },
+    { 
+        title: "Your Enchanting Presence", 
+        text: "Simply being you, with your natural glow and captivating soul, makes every moment feel like a gift."
+    }
+];
+        // Variables
+        let scene, camera, renderer, particles;
+        let currentReason = 0;
+        let viewedReasons = new Set();
+        let mouseX = 0, mouseY = 0;
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
+            initCursor();
+            createReasonDiamonds();
+            createProgressDots();
+            initInteractions();
+            createFloatingElements();
+            
+            // Auto-play background music on first interaction
+            document.addEventListener('click', () => {
+                document.getElementById('background-music').play().catch(e => {});
+            }, { once: true });
+        });
+
+        // Three.js Background
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create floating pineapple-colored particles
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 200;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            const pineappleColors = [
+                { r: 1.0, g: 0.6, b: 0.34 }, // Orange
+                { r: 1.0, g: 0.85, b: 0.24 }, // Yellow
+                { r: 0.42, g: 0.77, b: 0.49 }, // Green
+            ];
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 50;
+                positions[i + 1] = (Math.random() - 0.5) * 50;
+                positions[i + 2] = (Math.random() - 0.5) * 50;
+
+                const color = pineappleColors[Math.floor(Math.random() * pineappleColors.length)];
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 10;
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (particles) {
+                particles.rotation.x += 0.0005;
+                particles.rotation.y += 0.001;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Custom Cursor
+        function initCursor() {
+            const cursor = document.getElementById('cursor');
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                cursor.style.left = mouseX - 10 + 'px';
+                cursor.style.top = mouseY - 10 + 'px';
+
+                // Create trail effect
+                if (Math.random() < 0.3) {
+                    createTrail(mouseX, mouseY);
+                }
+            });
+        }
+
+        function createTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = x + Math.random() * 10 - 5 + 'px';
+            trail.style.top = y + Math.random() * 10 - 5 + 'px';
+            document.body.appendChild(trail);
+
+            setTimeout(() => trail.remove(), 500);
+        }
+
+        // Create reason diamonds
+        function createReasonDiamonds() {
+            const grid = document.getElementById('reasons-grid');
+            
+            for (let i = 0; i < 5; i++) {
+                const diamond = document.createElement('div');
+                diamond.className = 'reason-diamond';
+                diamond.style.setProperty('--index', i);
+                diamond.innerHTML = `<span class="reason-number">${i + 1}</span>`;
+                diamond.addEventListener('click', () => showReason(i));
+                grid.appendChild(diamond);
+            }
+        }
+
+        // Create progress dots
+        function createProgressDots() {
+            const container = document.getElementById('progress-container');
+            
+            for (let i = 0; i < 5; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'progress-dot';
+                container.appendChild(dot);
+            }
+        }
+
+        // Show reason modal
+        function showReason(index) {
+            const modal = document.getElementById('reason-display');
+            const title = document.getElementById('reason-title');
+            const text = document.getElementById('reason-text');
+            const diamond = document.querySelectorAll('.reason-diamond')[index];
+            const progressDot = document.querySelectorAll('.progress-dot')[index];
+
+            title.textContent = reasons[index].title;
+            text.textContent = reasons[index].text;
+            modal.classList.add('show');
+
+            // Mark as viewed
+            viewedReasons.add(index);
+            diamond.classList.add('active');
+            progressDot.classList.add('active');
+
+            // Check if all reasons are viewed
+            if (viewedReasons.size === 21) {
+                setTimeout(() => {
+                    document.getElementById('final-message').style.opacity = '1';
+                    document.getElementById('final-message').style.transform = 'translateY(0)';
+                }, 1000);
+            }
+        }
+
+        // Initialize interactions
+        function initInteractions() {
+            const closeBtn = document.getElementById('close-reason');
+            const modal = document.getElementById('reason-display');
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+
+        // Create floating decorative elements
+        function createFloatingElements() {
+            const symbols = ['🍍', '✨', '💫', '🌟'];
+            
+            for (let i = 0; i < 15; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                element.style.left = Math.random() * 100 + 'vw';
+                element.style.top = Math.random() * 100 + 'vh';
+                element.style.fontSize = Math.random() * 20 + 15 + 'px';
+                element.style.animationDelay = Math.random() * 6 + 's';
+                element.style.animationDuration = Math.random() * 4 + 4 + 's';
+                document.body.appendChild(element);
+            }
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
+        // Auto-reveal hint
+        setTimeout(() => {
+            const firstDiamond = document.querySelector('.reason-diamond');
+            if (firstDiamond) {
+                firstDiamond.style.animation = 'pulse 1s ease infinite';
+                setTimeout(() => {
+                    firstDiamond.style.animation = '';
+                }, 3000);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

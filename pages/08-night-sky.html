@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Universe</title>
+    <style>
+        :root {
+            --ui-gradient-start: rgba(255,0,110,.4);
+            --ui-gradient-end: rgba(131,56,236,.4);
+            --ui-glow-color: rgba(255,0,150,.4);
+            --ui-border-color: rgba(255,100,200,.5);
+            --info-bg-color: rgba(20,0,40,.8);
+            --info-border-color: rgba(255,100,200,.3);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Arial', sans-serif;
+            cursor: grab;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .title {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #fff;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            to {
+                text-shadow: 0 0 30px rgba(255, 0, 150, 0.6), 0 0 40px rgba(131, 56, 236, 0.4);
+            }
+        }
+
+        /* Audio Controls */
+        .audio-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 10px 15px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--ui-gradient-start), var(--ui-gradient-end));
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ui-border-color);
+            box-shadow: 0 8px 32px var(--ui-glow-color);
+            z-index: 1000;
+            width: 200px;
+            transition: background .5s ease, border-color .5s ease, box-shadow .5s ease;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, .2);
+        }
+
+        .stat-label {
+            color: #ffd6ff;
+        }
+
+        .stat-value {
+            background: linear-gradient(90deg, #ff006e, #3a86ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* Butterfly Evolution Button */
+        .grow-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, var(--ui-gradient-start), var(--ui-gradient-end));
+            color: white;
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--ui-border-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px var(--ui-glow-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background .5s ease, border-color .5s ease, box-shadow .5s ease;
+        }
+
+        .grow-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: #fff;
+        }
+
+        .grow-button:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .grow-button::before {
+            content: "🦋";
+            font-size: 1.5em;
+            margin-right: 5px;
+            animation: heartbeat 1.5s infinite;
+            background: linear-gradient(45deg, #ff006e, #8338ec);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Info Panel */
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 13px;
+            text-shadow: 0 0 10px rgba(255, 0, 150, .8);
+            pointer-events: none;
+            background: var(--info-bg-color);
+            padding: 10px 15px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--info-border-color);
+            transition: background .5s ease, border-color .5s ease, box-shadow .5s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                top: 10px;
+                padding: 0 10px;
+            }
+            
+            .audio-control {
+                top: 10px;
+                left: 10px;
+                padding: 8px 12px;
+            }
+            
+            .stats-panel {
+                top: 10px;
+                right: 10px;
+                width: 150px;
+                font-size: 12px;
+                padding: 10px;
+            }
+            
+            .grow-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 10px 18px;
+                font-size: 12px;
+            }
+            
+            #info {
+                bottom: 10px;
+                left: 10px;
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-panel {
+                display: none;
+            }
+            
+            .title {
+                font-size: 1.2rem;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 1.2rem;
+            z-index: 999;
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid #ff006e;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hidden audio element */
+        #background-audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Screen -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Loading Universe...</div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">Universe for you</h1>
+            <p class="subtitle">Maybe in future we will be sitting under the stars night discussing gossips but for now I have created small universe for you</p>
+        </div>
+
+        <!-- Audio Control -->
+        <div class="audio-control" id="audio-control">
+            <button class="audio-btn" id="audio-btn">
+                <span id="audio-icon">🎵</span>
+                <span id="audio-text">Play Music</span>
+            </button>
+        </div>
+
+        <!-- Three.js Container -->
+        <div id="container"></div>
+
+        <!-- Butterfly Evolution Button -->
+        <div id="growButterfly" class="grow-button"><span>Evolve</span></div>
+
+        <!-- Stats Panel -->
+        <div class="stats-panel" id="stats">
+            <div class="stat-row"><div class="stat-label">FPS:</div><div class="stat-value" id="fpsValue">--</div></div>
+            <div class="stat-row"><div class="stat-label">Particles:</div><div class="stat-value" id="particleCountValue">40,000</div></div>
+            <div class="stat-row"><div class="stat-label">Stage:</div><div class="stat-value" id="stageValue">1</div></div>
+        </div>
+
+        <!-- Info Panel -->
+        <div id="info">✨ Drag to rotate | Scroll to zoom | Double-click to reset ✨</div>
+
+        <!-- Background Audio -->
+        <audio id="background-audio" loop preload="auto">
+            <source src="../assets/audio/are are are arrr.mp3" type="audio/mpeg">
+            <source src="src/background-music.ogg" type="audio/ogg">
+            <source src="src/background-music.wav" type="audio/wav">
+        </audio>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+        import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
+
+        let scene, camera, renderer, controls, particleSystem, composer, stars;
+        let chrysalisSystem; 
+        let bloomPass, afterimagePass, vignettePass;
+        let pointLight1, pointLight2;
+
+        const clock = new THREE.Clock();
+        let frameCounter = 0, lastTime = 0, fps = 60;
+        
+        let animationProgress = 1;
+        let pulseTime = 0, waveTime = 0;
+        
+        let butterflyStage = 0;
+        let previousStageIndex = 0;
+        const growthStages = [
+            { numParticles: 40000, scale: 1.8, particleSize: 0.040, theme: 'love' },
+            { numParticles: 80000, scale: 2.5, particleSize: 0.045, theme: 'ocean' },
+            { numParticles: 120000, scale: 3.2, particleSize: 0.050, theme: 'sunset' },
+            { numParticles: 200000, scale: 4.0, particleSize: 0.055, theme: 'galaxy' }
+        ];
+        const MAX_PARTICLES = growthStages[3].numParticles;
+
+        const colorThemes = {
+            love: { 
+                particleColor1: new THREE.Color(0xff006e), particleColor2: new THREE.Color(0xff4458), backgroundColor: new THREE.Color(0x0a0015),
+                uiGradientStart: 'rgba(255,0,110,.4)', uiGradientEnd: 'rgba(131,56,236,.4)', uiGlow: 'rgba(255,0,150,.4)', uiBorder: 'rgba(255,100,200,.5)',
+                infoBg: 'rgba(20,0,40,.8)', infoBorder: 'rgba(255,100,200,.3)'
+            },
+            ocean: { 
+                particleColor1: new THREE.Color(0x3a86ff), particleColor2: new THREE.Color(0x06ffa5), backgroundColor: new THREE.Color(0x001025),
+                uiGradientStart: 'rgba(58,134,255,.4)', uiGradientEnd: 'rgba(6,255,165,.4)', uiGlow: 'rgba(58,134,255,.4)', uiBorder: 'rgba(58,134,255,.5)',
+                infoBg: 'rgba(0,20,40,.8)', infoBorder: 'rgba(58,134,255,.3)'
+            },
+            sunset: { 
+                particleColor1: new THREE.Color(0xffbe0b), particleColor2: new THREE.Color(0xfb5607), backgroundColor: new THREE.Color(0x1a0505),
+                uiGradientStart: 'rgba(255,190,11,.4)', uiGradientEnd: 'rgba(251,86,7,.4)', uiGlow: 'rgba(255,190,11,.4)', uiBorder: 'rgba(255,190,11,.5)',
+                infoBg: 'rgba(40,10,10,.8)', infoBorder: 'rgba(255,190,11,.3)'
+            },
+            galaxy: { 
+                particleColor1: new THREE.Color(0x8338ec), particleColor2: new THREE.Color(0x3a86ff), backgroundColor: new THREE.Color(0x000010),
+                uiGradientStart: 'rgba(131,56,236,.4)', uiGradientEnd: 'rgba(58,134,255,.4)', uiGlow: 'rgba(131,56,236,.4)', uiBorder: 'rgba(131,56,236,.5)',
+                infoBg: 'rgba(10,0,20,.8)', infoBorder: 'rgba(131,56,236,.3)'
+            }
+        };
+
+        const params = {
+            particleColor1: new THREE.Color(0xff006e),
+            particleColor2: new THREE.Color(0xff4458),
+            backgroundColor: new THREE.Color(0x0a0015),
+            bloomStrength: 0.35,
+            bloomRadius: 0.9,
+            bloomThreshold: 0.15,
+            motionTrail: 0.85,
+            waveEffect: 0.5,
+            pulseSpeed: 0.2,
+            ambientLightIntensity: 0.4,
+            directionalLightIntensity: 0.9,
+            particleMotionSpeed: 0.8
+        };
+
+        // Initialize everything
+        init();
+
+        function init() {
+            initScenes();
+            initLights();
+            createParticleSystem();
+            createChrysalisSystem();
+            createStarField();
+            initControls();
+            initEventListeners();
+            initComposers();
+            snapToStage(0);
+            
+            // Hide loading screen after initialization
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 2000);
+            
+            animate();
+        }
+
+        function initScenes() {
+            scene = new THREE.Scene();
+            scene.background = params.backgroundColor;
+            scene.fog = new THREE.FogExp2(params.backgroundColor, 0.01);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 8;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            document.getElementById('container').appendChild(renderer.domElement);
+        }
+
+        function initLights() {
+            scene.add(new THREE.AmbientLight(0xffffff, params.ambientLightIntensity));
+            const dir = new THREE.DirectionalLight(0xffffff, params.directionalLightIntensity);
+            dir.position.set(1, 3, 2);
+            scene.add(dir);
+
+            pointLight1 = new THREE.PointLight(params.particleColor1, 1.5, 25);
+            pointLight1.position.set(5, 3, 2);
+            scene.add(pointLight1);
+
+            pointLight2 = new THREE.PointLight(params.particleColor2, 1.5, 25);
+            pointLight2.position.set(-5, -3, -2);
+            scene.add(pointLight2);
+
+            const rim = new THREE.DirectionalLight(0xffffff, 0.5);
+            rim.position.set(0, 0, -10);
+            scene.add(rim);
+        }
+
+        function initComposers() {
+            composer = new EffectComposer(renderer);
+            composer.addPass(new RenderPass(scene, camera));
+
+            bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), params.bloomStrength, params.bloomRadius, params.bloomThreshold);
+            composer.addPass(bloomPass);
+
+            afterimagePass = new AfterimagePass(1.0 - params.motionTrail);
+            composer.addPass(afterimagePass);
+
+            const customShader = {
+                uniforms: { tDiffuse: { value: null }, time: { value: 0 }, waveEffect: { value: params.waveEffect } },
+                vertexShader: `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} `,
+                fragmentShader: `
+                    uniform sampler2D tDiffuse;uniform float time;uniform float waveEffect;varying vec2 vUv;
+                    void main(){vec2 uv=vUv;float w=sin(uv.y*10.0+time*2.0)*waveEffect*0.01;uv.x+=w;
+                        vec4 tex=texture2D(tDiffuse,uv);
+                        tex.r=pow(tex.r,0.9);tex.g=pow(tex.g,1.1);tex.b=pow(tex.b,0.95);
+                        gl_FragColor=tex;}
+                `
+            };
+            const customPass = new ShaderPass(customShader);
+            composer.addPass(customPass);
+            composer.customPass = customPass;
+            
+            const vignetteShader = {
+                uniforms: {
+                    tDiffuse: { value: null },
+                    offset: { value: 1.0 },
+                    darkness: { value: 1.0 }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform sampler2D tDiffuse;
+                    uniform float offset;
+                    uniform float darkness;
+                    varying vec2 vUv;
+                    void main() {
+                        vec4 texel = texture2D(tDiffuse, vUv);
+                        vec2 uv = (vUv - vec2(0.5)) * vec2(offset);
+                        gl_FragColor = texel * vec4(mix(vec3(1.0), vec3(darkness), dot(uv, uv)), 1.0);
+                    }
+                `
+            };
+            vignettePass = new ShaderPass(vignetteShader);
+            vignettePass.uniforms.offset.value = 1.2;
+            vignettePass.uniforms.darkness.value = 1.2;
+            composer.addPass(vignettePass);
+
+            composer.addPass(new OutputPass());
+        }
+
+        function initControls() {
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.1;
+            controls.rotateSpeed = 0.8;
+            controls.zoomSpeed = 0.8;
+            controls.panSpeed = 0.8;
+            controls.minDistance = 2;
+            controls.maxDistance = 20;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+            controls.addEventListener('start', () => { document.body.style.cursor = 'grabbing'; });
+            controls.addEventListener('end', () => { document.body.style.cursor = 'grab'; });
+        }
+
+        function createParticleSystem() {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(MAX_PARTICLES * 3);
+            const colors = new Float32Array(MAX_PARTICLES * 3);
+            const sizes = new Float32Array(MAX_PARTICLES);
+            const phases = new Float32Array(MAX_PARTICLES);
+            const parametricT = new Float32Array(MAX_PARTICLES);
+
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                phases[i] = Math.random() * Math.PI * 2;
+                const steps = 2000;
+                parametricT[i] = (i % steps) / steps * Math.PI * 12;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
+            geometry.setAttribute('parametricT', new THREE.BufferAttribute(parametricT, 1));
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: { time: { value: 0 }, pixelRatio: { value: Math.min(window.devicePixelRatio, 2) }, pulseAmount: { value: 0.2 } },
+                vertexShader: `
+                    attribute float size;attribute float phase;varying vec3 vColor;
+                    uniform float time;uniform float pixelRatio;uniform float pulseAmount;
+                    void main(){
+                        vColor=color;vec4 mv=modelViewMatrix*vec4(position,1.0);
+                        float pulse=1.+sin(time+phase)*pulseAmount;
+                        gl_PointSize=size*pixelRatio*pulse*(300./-mv.z);
+                        gl_Position=projectionMatrix*mv;
+                    }`,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    void main(){
+                        vec2 uv=gl_PointCoord.xy-0.5;
+                        float d=length(uv);if(d>0.5) discard;
+                        float alpha=1.-smoothstep(0.3,0.5,d);
+                        float glow=exp(-d*4.)*0.8+0.2;
+                        vec3 col=vColor*glow+vec3(1.,.8,.9)*(1.-d)*0.3;
+                        gl_FragColor=vec4(col,alpha);
+                    }`,
+                transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true
+            });
+            particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+        }
+
+        function createChrysalisSystem() {
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(MAX_PARTICLES * 3);
+            const colors = new Float32Array(MAX_PARTICLES * 3);
+            const sizes = new Float32Array(MAX_PARTICLES);
+            const parametricT = new Float32Array(MAX_PARTICLES);
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            geometry.setAttribute('parametricT', new THREE.BufferAttribute(parametricT, 1));
+            
+            chrysalisSystem = new THREE.Points(geometry, particleSystem.material.clone());
+            chrysalisSystem.visible = false;
+            scene.add(chrysalisSystem);
+        }
+
+        function createStarField() {
+            const numStars = 20000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(numStars * 3);
+            const colors = new Float32Array(numStars * 3);
+            const sizes = new Float32Array(numStars);
+
+            for (let i = 0; i < numStars; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
+
+                const color = new THREE.Color().setHSL(Math.random(), 0.7, 0.9);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+
+                sizes[i] = Math.random() * 2 + 1;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: { time: { value: 0 } },
+                vertexShader: `
+                    uniform float time;
+                    attribute float size;
+                    varying vec3 vColor;
+                    void main() {
+                        vColor = color;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (300.0 / -mvPosition.z) * (0.5 + sin(time * 2.0 + position.x * 0.01) * 0.5);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    void main() {
+                        if (length(gl_PointCoord - vec2(0.5, 0.5)) > 0.475) discard;
+                        gl_FragColor = vec4(vColor, 1.0);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                depthTest: false,
+                transparent: true,
+                vertexColors: true
+            });
+
+            stars = new THREE.Points(geometry, material);
+            scene.add(stars);
+        }
+
+        function initEventListeners() {
+            // Butterfly evolution button
+            document.getElementById('growButterfly').addEventListener('click', () => {
+                if (animationProgress < 1) return;
+                previousStageIndex = butterflyStage;
+                butterflyStage = (butterflyStage + 1) % growthStages.length;
+                setButterflyStage(butterflyStage, previousStageIndex);
+            });
+
+            // Audio control
+            const audioBtn = document.getElementById('audio-btn');
+            const audio = document.getElementById('background-audio');
+            let isPlaying = false;
+
+            audioBtn.addEventListener('click', () => {
+                if (!isPlaying) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        document.getElementById('audio-icon').textContent = '🎵';
+                        document.getElementById('audio-text').textContent = 'Playing...';
+                    }).catch(e => {
+                        console.log('Audio play failed:', e);
+                        document.getElementById('audio-text').textContent = 'Audio Unavailable';
+                    });
+                } else {
+                    audio.pause();
+                    isPlaying = false;
+                    document.getElementById('audio-icon').textContent = '⏸️';
+                    document.getElementById('audio-text').textContent = 'Play Music';
+                }
+            });
+
+            window.addEventListener('resize', onWindowResize, false);
+            renderer.domElement.addEventListener('dblclick',()=>{camera.position.set(0,0,8);controls.reset();});
+    }
+
+    function onWindowResize(){
+        camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth,innerHeight);
+        composer.setSize(innerWidth,innerHeight);
+        if (particleSystem) {
+            particleSystem.material.uniforms.pixelRatio.value=Math.min(devicePixelRatio,2);
+        }
+    }
+
+    function setButterflyStage(stageIndex, oldStageIndex) {
+        const newStage = growthStages[stageIndex];
+        
+        document.getElementById('particleCountValue').textContent = newStage.numParticles.toLocaleString();
+        document.getElementById('stageValue').textContent = stageIndex + 1;
+
+        applyColorTheme(newStage.theme);
+        prepareMorph(oldStageIndex, stageIndex);
+    }
+    
+    function snapToStage(stageIndex) {
+        butterflyStage = stageIndex;
+        const stage = growthStages[butterflyStage];
+        
+        document.getElementById('particleCountValue').textContent = stage.numParticles.toLocaleString();
+        document.getElementById('stageValue').textContent = stageIndex + 1;
+
+        applyColorTheme(stage.theme);
+        
+        const positions = particleSystem.geometry.attributes.position.array;
+        const sizes = particleSystem.geometry.attributes.size.array;
+        const parametricT = particleSystem.geometry.attributes.parametricT.array;
+        const pathSpeed = 0.1;
+        const time = clock.getElapsedTime();
+
+        for (let i = 0; i < stage.numParticles; i++) {
+            const currentT = parametricT[i] + time * pathSpeed;
+            const pathPos = getButterflyPoint(currentT, stage.scale);
+            positions.set([pathPos.x, pathPos.y, pathPos.z], i * 3);
+            sizes[i] = stage.particleSize * (0.5 + Math.random());
+        }
+        particleSystem.geometry.setDrawRange(0, stage.numParticles);
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+        particleSystem.geometry.attributes.size.needsUpdate = true;
+        animationProgress = 1;
+    }
+
+    function prepareMorph(oldStageIndex, newStageIndex){
+        const oldStage = growthStages[oldStageIndex];
+        const newStage = growthStages[newStageIndex];
+        
+        const chrysalisPositions = chrysalisSystem.geometry.attributes.position.array;
+        const chrysalisSizes = chrysalisSystem.geometry.attributes.size.array;
+        const chrysalisColors = chrysalisSystem.geometry.attributes.color.array;
+        const chrysalisParametricT = chrysalisSystem.geometry.attributes.parametricT.array;
+        
+        const mainParametricT = particleSystem.geometry.attributes.parametricT.array;
+        const mainColors = particleSystem.geometry.attributes.color.array;
+        const mainSizes = particleSystem.geometry.attributes.size.array;
+
+        chrysalisParametricT.set(mainParametricT.slice(0, oldStage.numParticles));
+        for (let i = 0; i < oldStage.numParticles; i++) {
+            chrysalisSizes[i] = oldStage.particleSize * (0.5 + Math.random());
+            const mix = Math.random();
+            const col = new THREE.Color().lerpColors(colorThemes[oldStage.theme].particleColor1, colorThemes[oldStage.theme].particleColor2, mix);
+            chrysalisColors.set([col.r, col.g, col.b], i*3);
+        }
+        chrysalisSystem.geometry.setDrawRange(0, oldStage.numParticles);
+        chrysalisSystem.geometry.attributes.size.needsUpdate = true;
+        chrysalisSystem.geometry.attributes.color.needsUpdate = true;
+        chrysalisSystem.visible = true;
+
+        for(let i=0; i < newStage.numParticles; i++){
+            const mix = Math.random();
+            const col = new THREE.Color().lerpColors(params.particleColor1, params.particleColor2, mix);
+            mainColors.set([col.r, col.g, col.b], i*3);
+            mainSizes[i] = newStage.particleSize * (0.5 + Math.random());
+        }
+        particleSystem.geometry.setDrawRange(0, newStage.numParticles);
+        particleSystem.geometry.attributes.color.needsUpdate = true;
+        particleSystem.geometry.attributes.size.needsUpdate = true;
+
+        animationProgress = 0;
+    }
+
+    function getButterflyPoint(t, scale) {
+        const r = Math.exp(Math.cos(t)) - 2 * Math.cos(4 * t) + Math.pow(Math.sin(t / 12), 5);
+        const x = scale * Math.sin(t) * r * 0.3;
+        const y = scale * Math.cos(t) * r * 0.3;
+        const z = scale * (Math.sin(t) + Math.cos(2 * t) * 0.5) * 0.1;
+        return new THREE.Vector3(x, y, z);
+    }
+    
+    function applyColorTheme(th){
+        if(!colorThemes[th]) return;
+        const theme = colorThemes[th];
+        params.particleColor1.copy(theme.particleColor1);
+        params.particleColor2.copy(theme.particleColor2);
+        params.backgroundColor.copy(theme.backgroundColor);
+
+        const root = document.documentElement.style;
+        root.setProperty('--ui-gradient-start', theme.uiGradientStart);
+        root.setProperty('--ui-gradient-end', theme.uiGradientEnd);
+        root.setProperty('--ui-glow-color', theme.uiGlow);
+        root.setProperty('--ui-border-color', theme.uiBorder);
+        root.setProperty('--info-bg-color', theme.infoBg);
+        root.setProperty('--info-border-color', theme.infoBorder);
+        
+        scene.background = params.backgroundColor;
+        scene.fog.color.copy(params.backgroundColor);
+        pointLight1.color.copy(params.particleColor1);
+        pointLight2.color.copy(params.particleColor2);
+    }
+
+    function animate(){
+        requestAnimationFrame(animate);
+        const delta=Math.min(clock.getDelta(),0.1);
+        const time=clock.getElapsedTime();
+
+        frameCounter++;
+        if(time-lastTime>=1){
+            fps=Math.round(frameCounter/(time-lastTime));
+            document.getElementById('fpsValue').textContent=fps;
+            frameCounter=0; lastTime=time;
+        }
+
+        pulseTime+=delta*params.pulseSpeed*5;
+        waveTime +=delta;
+        if (composer.customPass) composer.customPass.uniforms.time.value = waveTime;
+        if (particleSystem) {
+            particleSystem.material.uniforms.time.value = pulseTime;
+            chrysalisSystem.material.uniforms.time.value = pulseTime;
+        }
+        if (stars) {
+            stars.material.uniforms.time.value = time;
+        }
+
+        const lt=time*0.2;
+        pointLight1.position.set(5*Math.cos(lt*0.7+0.5), 3*Math.sin(lt*1.1), 2+2*Math.sin(lt*0.9-0.3));
+        pointLight2.position.set(-5*Math.cos(lt*0.8+Math.PI+0.2), -3*Math.sin(lt*1.2+Math.PI-0.5), -2+2*Math.cos(lt*1.0+Math.PI+0.4));
+
+        const pathSpeed = 0.1;
+
+        if (animationProgress < 1) {
+            const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            animationProgress = Math.min(animationProgress + delta * 0.65, 1);
+            const easedProgress = easeInOutCubic(animationProgress);
+            
+            const oldStage = growthStages[previousStageIndex];
+            const chrysalisPos = chrysalisSystem.geometry.attributes.position.array;
+            const chrysalisSizes = chrysalisSystem.geometry.attributes.size.array;
+            const chrysalisT = chrysalisSystem.geometry.attributes.parametricT.array;
+            for(let i=0; i<oldStage.numParticles; i++){
+                const idx = i*3;
+                const currentT = chrysalisT[i] + time * pathSpeed;
+                const pathPos = getButterflyPoint(currentT, oldStage.scale);
+                
+                const splitAmount = easedProgress * 2.0;
+                const fade = 1.0 - easedProgress;
+                const sign = Math.sign(pathPos.x) || 1;
+                
+                chrysalisPos[idx] = pathPos.x + sign * splitAmount;
+                chrysalisPos[idx+1] = pathPos.y;
+                chrysalisPos[idx+2] = pathPos.z;
+                chrysalisSizes[i] *= (1.0 - delta * 2.5);
+            }
+            chrysalisSystem.geometry.attributes.position.needsUpdate = true;
+            chrysalisSystem.geometry.attributes.size.needsUpdate = true;
+
+            const newStage = growthStages[butterflyStage];
+            const mainPos = particleSystem.geometry.attributes.position.array;
+            const mainT = particleSystem.geometry.attributes.parametricT.array;
+            for(let i=0; i<newStage.numParticles; i++){
+                const idx = i*3;
+                const currentT = mainT[i] + time * pathSpeed;
+                const pathPos = getButterflyPoint(currentT, newStage.scale);
+                
+                mainPos[idx] = pathPos.x * easedProgress;
+                mainPos[idx+1] = pathPos.y * easedProgress;
+                mainPos[idx+2] = pathPos.z * easedProgress;
+            }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+
+            if (animationProgress >= 1) {
+                chrysalisSystem.visible = false;
+            }
+
+        } else {
+            const numParticles = growthStages[butterflyStage].numParticles;
+            const scale = growthStages[butterflyStage].scale;
+            const pos = particleSystem.geometry.attributes.position.array;
+            const parametricT = particleSystem.geometry.attributes.parametricT.array;
+            
+            for(let i=0; i<numParticles; i++){
+                const idx=i*3;
+                const currentT = parametricT[i] + time * pathSpeed;
+                const pathPos = getButterflyPoint(currentT, scale);
+                pos[idx]   = pathPos.x;
+                pos[idx+1] = pathPos.y;
+                pos[idx+2] = pathPos.z;
+            }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+        }
+        
+        controls.update();
+        composer.render();
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

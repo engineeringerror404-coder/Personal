@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Future Adventures - Special Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10001;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Sparkle Effect */
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: sparkleAnimation 1s ease-out forwards;
+        }
+
+        @keyframes sparkleAnimation {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5) rotate(180deg);
+            }
+        }
+
+        /* Three.js Background */
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 2s ease forwards;
+        }
+
+        .main-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffd93d);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientAnimation 3s ease infinite;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        @keyframes gradientAnimation {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scratch Cards Grid */
+        .scratch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem 0;
+        }
+
+        .scratch-card-wrapper {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .scratch-card-wrapper:hover {
+            transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) scale(1.05);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            cursor: grab;
+            width: 100%;
+            height: 100%;
+        }
+
+        .scratch-canvas:active {
+            cursor: grabbing;
+        }
+
+        .revealed-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            color: #333;
+            z-index: 2;
+        }
+
+        .plan-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .plan-description {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        /* Loader */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .butterfly-loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .butterfly-loader::before,
+        .butterfly-loader::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50% 50% 50% 0;
+            animation: butterflyWing 1s ease-in-out infinite alternate;
+        }
+
+        .butterfly-loader::before {
+            top: 0;
+            left: 0;
+            transform-origin: bottom right;
+        }
+
+        .butterfly-loader::after {
+            top: 0;
+            right: 0;
+            transform-origin: bottom left;
+            border-radius: 50% 50% 0 50%;
+        }
+
+        @keyframes butterflyWing {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(-20deg) scale(1.1); }
+        }
+
+        /* Final Button */
+        .final-section {
+            margin-top: 3rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .final-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .next-btn {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .next-btn:hover::before {
+            left: 100%;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Instructions */
+        .instructions {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .instructions::before {
+            content: '✨';
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .scratch-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="butterfly-loader"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+
+    <!-- Three.js Background -->
+    <div id="three-container"></div>
+
+    <!-- Audio -->
+    <audio id="background-music" loop>
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="main-title">Our Future Adventures</h1>
+            <p class="subtitle">A Special Collection Just For You</p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            Scratch each card to reveal our amazing plans together. Choose wisely - only the first one you complete will be our adventure!
+        </div>
+
+        <!-- Scratch Cards Grid -->
+        <div class="scratch-grid">
+            <div class="scratch-card-wrapper" data-plan="1">
+                <canvas class="scratch-canvas"></canvas>
+                <div class="revealed-content">
+                    <div class="plan-title">Enjoying Movie</div>
+                    <div class="plan-description">A cozy evening with your favorite films</div>
+                </div>
+            </div>
+
+            <div class="scratch-card-wrapper" data-plan="4">
+        <canvas class="scratch-canvas"></canvas>
+        <div class="revealed-content">
+            <div class="plan-title">Your Heart’s Desire</div>
+            <div class="plan-description">Anything you want. your wish will be the command for me</div>
+        </div>
+    </div>
+
+                <div class="scratch-card-wrapper" data-plan="2">
+        <canvas class="scratch-canvas"></canvas>
+        <div class="revealed-content">
+            <div class="plan-title">Café Meetup</div>
+            <div class="plan-description">Treat from my side at yur favorite café</div>
+        </div>
+    </div>
+            <div class="scratch-card-wrapper" data-plan="4">
+                <canvas class="scratch-canvas"></canvas>
+                <div class="revealed-content">
+                    <div class="plan-title">Temple Visit</div>
+                    <div class="plan-description">A serene visit to a temple, prayers for your career success</div>
+                </div>
+            </div>
+
+            <div class="scratch-card-wrapper" data-plan="5">
+                <canvas class="scratch-canvas"></canvas>
+                <div class="revealed-content">
+                    <div class="plan-title">Surprise Adventure</div>
+                    <div class="plan-description">A adventures day that will take your breath away</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Section -->
+        <div class="final-section" id="final-section">
+            <a href="./06-reasons.html" class="next-btn">
+                Let's Begin Our Journey
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Variables
+        let scene, camera, renderer, particles;
+        let scratchedCards = new Set();
+        let firstCompletedCard = null;
+        let mouseX = 0, mouseY = 0;
+        
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
+            initCursor();
+            initScratchCards();
+            initAudio();
+            
+            // Hide loader after 2 seconds
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // Three.js Setup
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // Create floating particles
+            const particleGeometry = new THREE.BufferGeometry();
+            const particleCount = 100;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+
+                colors[i] = Math.random();
+                colors[i + 1] = Math.random();
+                colors[i + 2] = Math.random();
+            }
+
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+
+            particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+
+            camera.position.z = 5;
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (particles) {
+                particles.rotation.x += 0.001;
+                particles.rotation.y += 0.002;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Custom Cursor
+        function initCursor() {
+            const cursor = document.getElementById('cursor');
+            const cursorDot = document.getElementById('cursor-dot');
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                cursor.style.left = mouseX - 10 + 'px';
+                cursor.style.top = mouseY - 10 + 'px';
+                cursorDot.style.left = mouseX - 2 + 'px';
+                cursorDot.style.top = mouseY - 2 + 'px';
+
+                // Create sparkles
+                if (Math.random() < 0.1) {
+                    createSparkle(mouseX, mouseY);
+                }
+            });
+        }
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = x + Math.random() * 20 - 10 + 'px';
+            sparkle.style.top = y + Math.random() * 20 - 10 + 'px';
+            document.body.appendChild(sparkle);
+
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+
+        // Scratch Cards
+        function initScratchCards() {
+            const wrappers = document.querySelectorAll('.scratch-card-wrapper');
+            
+            wrappers.forEach((wrapper, index) => {
+                const canvas = wrapper.querySelector('.scratch-canvas');
+                const ctx = canvas.getContext('2d');
+                
+                let isDrawing = false;
+                let scratchProgress = 0;
+
+                function setCanvasSize() {
+                    canvas.width = wrapper.clientWidth;
+                    canvas.height = wrapper.clientHeight;
+                    initCanvas();
+                }
+
+                function initCanvas() {
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    gradient.addColorStop(0, '#C0C0C0');
+                    gradient.addColorStop(0.5, '#E0E0E0');
+                    gradient.addColorStop(1, '#A0A0A0');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Add scratch here text
+                    ctx.fillStyle = '#666';
+                    ctx.font = '20px Dancing Script';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Scratch Here', canvas.width / 2, canvas.height / 2);
+                    
+                    ctx.globalCompositeOperation = 'destination-out';
+                }
+
+                function getEventPos(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+                    return {
+                        x: clientX - rect.left,
+                        y: clientY - rect.top
+                    };
+                }
+
+                function scratch(x, y) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
+                function checkProgress() {
+                    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = pixels.data;
+                    let transparent = 0;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        if (data[i + 3] < 128) transparent++;
+                    }
+
+                    scratchProgress = (transparent / (canvas.width * canvas.height)) * 100;
+
+                    if (scratchProgress > 70 && !scratchedCards.has(index)) {
+                        scratchedCards.add(index);
+                        
+                        if (!firstCompletedCard) {
+                            firstCompletedCard = wrapper.dataset.plan;
+                            showFinalButton();
+                            
+                            // Disable other cards
+                            wrappers.forEach((w, i) => {
+                                if (i !== index) {
+                                    w.style.opacity = '0.5';
+                                    w.style.pointerEvents = 'none';
+                                }
+                            });
+                        }
+                    }
+                }
+
+                // Mouse events
+                canvas.addEventListener('mousedown', (e) => {
+                    isDrawing = true;
+                    const pos = getEventPos(e);
+                    scratch(pos.x, pos.y);
+                });
+
+                canvas.addEventListener('mousemove', (e) => {
+                    if (isDrawing) {
+                        const pos = getEventPos(e);
+                        scratch(pos.x, pos.y);
+                    }
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (isDrawing) {
+                        isDrawing = false;
+                        checkProgress();
+                    }
+                });
+
+                // Touch events
+                canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    isDrawing = true;
+                    const pos = getEventPos(e);
+                    scratch(pos.x, pos.y);
+                });
+
+                canvas.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    if (isDrawing) {
+                        const pos = getEventPos(e);
+                        scratch(pos.x, pos.y);
+                    }
+                });
+
+                window.addEventListener('touchend', (e) => {
+                    if (isDrawing) {
+                        isDrawing = false;
+                        checkProgress();
+                    }
+                });
+
+                setCanvasSize();
+                window.addEventListener('resize', setCanvasSize);
+            });
+        }
+
+        function showFinalButton() {
+            const finalSection = document.getElementById('final-section');
+            finalSection.classList.add('visible');
+        }
+
+        // Audio
+        function initAudio() {
+            const audio = document.getElementById('background-music');
+            
+            // Try to play audio (will only work with user interaction)
+            document.addEventListener('click', () => {
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            }, { once: true });
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+    </script>
+</body>
+</html>

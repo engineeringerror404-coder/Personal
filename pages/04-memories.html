@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday My Special One</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;600;700&family=Dancing+Script:wght@400;600;700&family=Great+Vibes&family=Sacramento&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            overflow: hidden;
+            font-family: 'Playfair Display', serif;
+            cursor: none;
+            position: relative;
+            height: 100vh;
+        }
+
+        /* Sparkle cursor trail */
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 30%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+        }
+
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: sparkleAnim 0.6s ease-out forwards;
+        }
+
+        @keyframes sparkleAnim {
+            0% { 
+                opacity: 1; 
+                transform: scale(0) rotate(0deg); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(1) rotate(180deg); 
+            }
+        }
+
+        /* Butterfly Loader */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .butterfly-loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .butterfly-loader::before,
+        .butterfly-loader::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid transparent;
+            border-top: 3px solid #ff6b9d;
+            border-radius: 50%;
+            animation: butterflyWing 1.5s ease-in-out infinite;
+        }
+
+        .butterfly-loader::before {
+            left: 0;
+            transform-origin: 30px 15px;
+        }
+
+        .butterfly-loader::after {
+            right: 0;
+            transform-origin: 0px 15px;
+            animation-delay: -0.75s;
+        }
+
+        @keyframes butterflyWing {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+
+        .loading-text {
+            color: #ff6b9d;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            text-align: center;
+            animation: glow 2s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        .progress-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#ff6b9d 0deg, transparent 0deg);
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .progress-circle::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+        }
+
+        /* Title */
+        .title-container {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .main-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #ff6b9d;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        .main-title:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 50px rgba(255, 107, 157, 0.8);
+        }
+
+        .char {
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .char.explode {
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.5; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .sub-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 10px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        /* Floating Cards Container */
+        .floating-cards {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        .card {
+            position: absolute;
+            width: 200px;
+            height: 280px;
+            perspective: 1000px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: linear-gradient(45deg, #ff6b9d, #ff9ff3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .card-back {
+            background: white;
+            transform: rotateY(180deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        .card:hover .card-back img {
+            transform: scale(1.1);
+        }
+
+        /* Opened Card Modal */
+        .card-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .card-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(100%) blur(3px);
+            opacity: 0.7;
+            z-index: 1;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        .modal-content {
+            position: relative;
+            z-index: 3;
+            max-width: 80%;
+            max-height: 80%;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+            transform: scale(0.8);
+            transition: transform 0.5s ease;
+            text-align: center;
+        }
+
+        .card-modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .modal-word {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .modal-description {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2.5rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 4;
+        }
+
+        .close-modal:hover {
+            color: #ff6b9d;
+            transform: scale(1.2) rotate(90deg);
+        }
+
+        /* Audio Visualizer */
+        .audio-visualizer {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            gap: 3px;
+            align-items: end;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-visualizer:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .audio-bar {
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(to top, #ff6b9d, #ff9ff3);
+            border-radius: 2px;
+            animation: audioWave 1s ease-in-out infinite;
+        }
+
+        .audio-bar:nth-child(2) { animation-delay: 0.1s; }
+        .audio-bar:nth-child(3) { animation-delay: 0.2s; }
+        .audio-bar:nth-child(4) { animation-delay: 0.3s; }
+        .audio-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes audioWave {
+            0%, 100% { height: 20px; }
+            50% { height: 40px; }
+        }
+
+        /* Navigation */
+        .navigation-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            z-index: 1000;
+            font-size: 1.1rem;
+            animation: pulse 2s ease-in-out infinite;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .next-button {
+            position: fixed;
+            bottom: 30px;
+            margin-top: 35vh;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: linear-gradient(45deg, #ff6b9d, #ff9ff3);
+            border: none;
+            border-radius: 50px;
+            padding: 18px 40px;
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(255, 107, 157, 0.4);
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .next-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .next-button:hover::before {
+            left: 100%;
+        }
+
+        .next-button:hover {
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 20px 50px rgba(255, 107, 157, 0.5);
+            background: linear-gradient(45deg, #ff9ff3, #ff6b9d);
+        }
+
+        .info-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .info-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+            border-color: #ff6b9d;
+            color: #ff6b9d;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 107, 157, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 107, 157, 0.8), 0 0 40px rgba(255, 107, 157, 0.3); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 0.9; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-title { font-size: 2.5rem; }
+            .sub-title { font-size: 1.3rem; }
+            .card { width: 150px; height: 210px; }
+            .modal-content { padding: 20px; max-width: 95%; }
+            .modal-word { font-size: 2rem; }
+            .modal-description { font-size: 1.2rem; }
+            .close-modal { font-size: 2rem; top: 15px; right: 20px; }
+            
+            .audio-visualizer {
+                top: 20px;
+                right: 20px;
+                padding: 10px 15px;
+            }
+            
+            .info-button {
+                bottom: 20px;
+                left: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .next-button {
+                bottom: 20px;
+                padding: 15px 30px;
+                font-size: 1.2rem;
+                min-width: 180px;
+            }
+            
+            .navigation-hint {
+                bottom: 90px;
+                font-size: 0.9rem;
+                padding: 12px 20px;
+            }
+            
+            .title-container {
+                top: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title { font-size: 2rem; }
+            .sub-title { font-size: 1.1rem; }
+            .card { width: 120px; height: 168px; }
+            .card-front { font-size: 1.2rem; }
+            
+            .next-button {
+                font-size: 1.1rem;
+                padding: 12px 25px;
+                min-width: 160px;
+            }
+            
+            .navigation-hint {
+                font-size: 0.8rem;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader-container" id="loader">
+        <div class="butterfly-loader"></div>
+        <div class="loading-text">Creating Something Special...</div>
+        <div class="progress-circle" id="progressCircle"></div>
+    </div>
+
+    <!-- Title -->
+    <div class="title-container">
+        <h1 class="main-title" id="mainTitle">Gallery</h1>
+        <p class="sub-title">Cherishing Your Radiant Pictures</p>
+    </div>
+
+    <!-- Floating Cards -->
+    <div class="floating-cards" id="floatingCards"></div>
+
+    <!-- Card Modal -->
+    <div class="card-modal" id="cardModal">
+        <div class="modal-background" id="modalBackground"></div>
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="close-modal" onclick="closeModal()">✕</div>
+        <div class="modal-content">
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-word" id="modalWord"></div>
+            <div class="modal-description" id="modalDescription"></div>
+        </div>
+    </div>
+
+    <!-- Audio Visualizer -->
+    <div class="audio-visualizer" id="audioVisualizer">
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+    </div>
+
+    <!-- Info Button -->
+    <button class="info-button" onclick="showInfo()">ℹ</button>
+
+    <!-- Navigation Hint -->
+    <div class="navigation-hint">
+        Click cards to open • Each card has its own melody • Move mouse for sparkles
+    </div>
+
+    <!-- Next Button -->
+    <button class="next-button" onclick="goToNext()">
+        ✨ Continue Our Journey ✨
+    </button>
+
+    <!-- Audio Elements -->
+    <div id="audioContainer"></div>
+
+    <script>
+        // Global variables
+        let loadingProgress = 0;
+        let currentAudio = null;
+        let isAudioPlaying = false;
+
+        // Card data with individual songs
+        const cardData = [
+    { 
+        src: '../assets/images/pic1.jpg', 
+        word: 'Radiant', 
+        color: '#ff6b9d',
+        description: 'Your smile lights up my entire world like the brightest star',
+        song: '../assets/audio/full-video-guzarish-ghajini-aamir-khan-asin-ar-rahman-javed-ali-son_aYFd46Kn.mp3'
+    },
+    { 
+        src: '../assets/images/pic2.jpg', 
+        word: 'Enchanting', 
+        color: '#ff9ff3',
+        description: 'Every moment with you feels like pure magic',
+        song: '../assets/audio/Geetha Govindam - Bgm Ringtone _ Download Link _ Melogrove [Ocy6J4S0xEk].mp3'
+    },
+    { 
+        src: '../assets/images/pic3.jpg', 
+        word: 'Graceful', 
+        color: '#feca57',
+        description: 'You move through life with such beautiful elegance',
+        song: '../assets/audio/are are are arrr.mp3'
+    },
+    { 
+        src: '../assets/images/pic4.jpg', 
+        word: 'Mesmerizing', 
+        color: '#48dbfb',
+        description: 'I could lose myself in your beautiful eyes forever',
+        song: '../assets/audio/electro-folk-bhumbro-shirley-setia-parry-g-aditya-dev-t-series-fsc9ggq3_l1Veaq4o.mp3'
+    },
+    { 
+        src: '../assets/images/pic6.jpg', 
+        word: 'Captivating', 
+        color: '#ff6348',
+        description: 'You have this amazing way of making everything better',
+        song: '../assets/audio/tumse-milke-dil-ka-jo-haal-kiya-kare-shahrukh-khan-sushmita-sen-main-hoon-na_KbVpqnaD.mp3'
+    }
+    
+        ];
+
+        // Initialize everything
+        function init() {
+            setupCursorTrail();
+            createFloatingCards();
+            setupTextDestruction();
+            startLoading();
+            setupAudioElements();
+        }
+
+        // Cursor trail with sparkles
+        function setupCursorTrail() {
+            let trails = [];
+            
+            document.addEventListener('mousemove', (e) => {
+                // Create trail dot
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                document.body.appendChild(trail);
+                
+                trails.push(trail);
+                
+                // Create sparkles
+                if (Math.random() > 0.7) {
+                    createSparkle(e.clientX, e.clientY);
+                }
+                
+                // Remove old trails
+                setTimeout(() => {
+                    trail.style.opacity = '0';
+                    setTimeout(() => {
+                        if (trail.parentNode) {
+                            trail.parentNode.removeChild(trail);
+                        }
+                    }, 300);
+                }, 100);
+                
+                // Limit trail count
+                if (trails.length > 20) {
+                    const oldTrail = trails.shift();
+                    if (oldTrail && oldTrail.parentNode) {
+                        oldTrail.parentNode.removeChild(oldTrail);
+                    }
+                }
+            });
+        }
+
+        // Create sparkle effect
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = (x + (Math.random() - 0.5) * 20) + 'px';
+            sparkle.style.top = (y + (Math.random() - 0.5) * 20) + 'px';
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                if (sparkle.parentNode) {
+                    sparkle.parentNode.removeChild(sparkle);
+                }
+            }, 600);
+        }
+
+        // Create floating cards
+        function createFloatingCards() {
+            const container = document.getElementById('floatingCards');
+            
+            cardData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.left = Math.random() * (window.innerWidth - 200) + 'px';
+                card.style.top = Math.random() * (window.innerHeight - 400) + 200 + 'px';
+                card.style.animationDelay = Math.random() * 2 + 's';
+                
+                // Random floating animation
+                card.style.animation = `float ${3 + Math.random() * 2}s ease-in-out infinite`;
+                
+                // Random movement
+                setInterval(() => {
+                    if (!card.classList.contains('flipped')) {
+                        const newX = Math.max(0, Math.min(window.innerWidth - 200, parseInt(card.style.left) + (Math.random() - 0.5) * 100));
+                        const newY = Math.max(200, Math.min(window.innerHeight - 280, parseInt(card.style.top) + (Math.random() - 0.5) * 50));
+                        card.style.left = newX + 'px';
+                        card.style.top = newY + 'px';
+                    }
+                }, 5000 + Math.random() * 5000);
+                
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div>${data.word}</div>
+                        </div>
+                        <div class="card-back">
+                            <img src="${data.src}" alt="${data.word}" loading="lazy">
+                        </div>
+                    </div>
+                `;
+                
+                // Add click event
+                card.addEventListener('click', () => openCard(card, data, index));
+                
+                container.appendChild(card);
+                
+                // Update progress
+                updateProgress();
+            });
+        }
+
+        // Setup audio elements
+        function setupAudioElements() {
+            const audioContainer = document.getElementById('audioContainer');
+            
+            cardData.forEach((data, index) => {
+                const audio = document.createElement('audio');
+                audio.id = `audio-${index}`;
+                audio.loop = true;
+                audio.volume = 0.7;
+                
+                // Add multiple source formats for better compatibility
+                audio.innerHTML = `
+                    <source src="${data.song}" type="audio/wav">
+                    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
+                `;
+                
+                audioContainer.appendChild(audio);
+            });
+        }
+
+        // Open card with modal
+        function openCard(cardElement, data, index) {
+            // Flip card
+            cardElement.classList.add('flipped');
+            
+            // Stop current audio if playing
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            
+            // Show modal
+            const modal = document.getElementById('cardModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalWord = document.getElementById('modalWord');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalBackground = document.getElementById('modalBackground');
+            
+            // Set modal content
+            modalImage.src = data.src;
+            modalWord.textContent = data.word;
+            modalWord.style.color = data.color;
+            modalDescription.textContent = data.description;
+            modalBackground.style.backgroundImage = `url(${data.src})`;
+            
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Play individual song
+            const audio = document.getElementById(`audio-${index}`);
+            if (audio) {
+                currentAudio = audio;
+                audio.play().then(() => {
+                    isAudioPlaying = true;
+                    updateAudioVisualizer();
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                });
+            }
+            
+            // Auto-close after 8 seconds
+            setTimeout(() => {
+                if (modal.classList.contains('active')) {
+                    closeModal();
+                }
+            }, 12000);
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('cardModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Stop current audio
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+                isAudioPlaying = false;
+                updateAudioVisualizer();
+            }
+            
+            // Unflip all cards after a delay
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.card');
+                cards.forEach(card => card.classList.remove('flipped'));
+            }, 1200);
+        }
+
+        // Update audio visualizer
+        function updateAudioVisualizer() {
+            const visualizer = document.getElementById('audioVisualizer');
+            const bars = visualizer.querySelectorAll('.audio-bar');
+            
+            if (isAudioPlaying) {
+                bars.forEach((bar, index) => {
+                    bar.style.animationPlayState = 'running';
+                    bar.style.height = (20 + Math.random() * 20) + 'px';
+                });
+                visualizer.style.background = 'rgba(255, 107, 157, 0.3)';
+            } else {
+                bars.forEach(bar => {
+                    bar.style.animationPlayState = 'paused';
+                    bar.style.height = '20px';
+                });
+                visualizer.style.background = 'rgba(255, 255, 255, 0.1)';
+            }
+        }
+
+        // Setup text destruction effect
+        function setupTextDestruction() {
+            const title = document.getElementById('mainTitle');
+            const text = title.textContent;
+            title.innerHTML = '';
+            
+            [...text].forEach(char => {
+                const span = document.createElement('span');
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                span.className = 'char';
+                title.appendChild(span);
+            });
+            
+            title.addEventListener('click', () => {
+                const chars = title.querySelectorAll('.char');
+                chars.forEach((char, i) => {
+                    setTimeout(() => {
+                        char.classList.add('explode');
+                    }, i * 50);
+                });
+                
+                setTimeout(() => {
+                    chars.forEach(char => {
+                        char.classList.remove('explode');
+                    });
+                }, 2000);
+            });
+        }
+
+        // Loading progress
+        function updateProgress() {
+            loadingProgress += 12.5; // 8 cards = 12.5% each
+            const circle = document.getElementById('progressCircle');
+            const degrees = (loadingProgress / 100) * 360;
+            circle.style.background = `conic-gradient(#ff6b9d ${degrees}deg, transparent ${degrees}deg)`;
+            
+            if (loadingProgress >= 100) {
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loader').style.display = 'none';
+                    }, 1000);
+                }, 500);
+            }
+        }
+
+        // Start loading simulation
+        function startLoading() {
+            setTimeout(() => {
+                if (loadingProgress < 100) {
+                    loadingProgress = 100;
+                    updateProgress();
+                }
+            }, 3000);
+        }
+
+        // Show info
+        function showInfo() {
+            alert('🎂 Happy Birthday Beautiful!\n\n✨ Click floating cards to open them\n🎵 Each card plays its own special melody\n🖱️ Move your mouse for magical sparkles\n💫 Cards float and move on their own\n🎨 Black & white backgrounds with colorful images\n\n💝 Made with love for someone very special');
+        }
+
+        // Go to next page
+        function goToNext() {
+            // Close any open modal first
+            if (document.getElementById('cardModal').classList.contains('active')) {
+                closeModal();
+            }
+            
+            setTimeout(() => {
+                window.location.href = '05-future-plans.html';
+            }, 500);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const currentX = parseInt(card.style.left);
+                const currentY = parseInt(card.style.top);
+                
+                // Keep cards within bounds
+                if (currentX > window.innerWidth - 200) {
+                    card.style.left = Math.max(0, window.innerWidth - 200) + 'px';
+                }
+                if (currentY > window.innerHeight - 280) {
+                    card.style.top = Math.max(200, window.innerHeight - 280) + 'px';
+                }
+            });
+        });
+
+        // Prevent right-click context menu for better experience
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize when DOM is loaded
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
